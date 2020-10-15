@@ -60,6 +60,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
                 throw std::exception();
             }
         }
+        std::shared_ptr<ITEMIDLIST> pidlSharedPtr(pidl, CoTaskMemFree);
 
         std::shared_ptr<IShellFolder> sub = [desktop, pidl](){
             IShellFolder* pSub = NULL;

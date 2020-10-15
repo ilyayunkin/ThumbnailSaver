@@ -7,7 +7,7 @@ TEMPLATE = app
 TARGET = ThumbnailSaver
 INCLUDEPATH += .
 QMAKE_CXXFLAGS+= -Wall -Werror
-LIBS+=-luuid -lgdi32
+LIBS+=-luuid -lgdi32 -lole32
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
