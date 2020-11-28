@@ -38,7 +38,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
     {
         const int Pos = File.find_last_of(L"\\");
 
-        std::shared_ptr<IShellFolder> desktop = [](){
+        auto desktop = []{
             IShellFolder* pDesktop = NULL;
             const HRESULT hr = SHGetDesktopFolder(&pDesktop);
             if(FAILED(hr))
@@ -62,7 +62,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
         }
         std::shared_ptr<ITEMIDLIST> pidlSharedPtr(pidl, CoTaskMemFree);
 
-        std::shared_ptr<IShellFolder> sub = [desktop, pidl](){
+        auto sub = [desktop, pidl]{
             IShellFolder* pSub = NULL;
             const HRESULT hr = desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&pSub);
             if(FAILED(hr))
@@ -84,7 +84,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
             }
         }
 
-        std::shared_ptr<IExtractImage> extract =[sub, pidl](){
+        auto extract = [sub, pidl]{
             IExtractImage* pIExtract = NULL;
             const HRESULT hr = sub ->GetUIObjectOf(NULL, 1, (LPCITEMIDLIST *)&pidl, IID_IExtractImage, NULL, (void**)& pIExtract);
             if(FAILED(hr))
