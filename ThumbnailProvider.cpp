@@ -46,7 +46,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
                 qDebug() << __FUNCTION__ << __LINE__ << "!!!!!!!!!!!!";
                 throw std::exception();
             }
-            return std::shared_ptr<IShellFolder>(pDesktop, Releaser<IShellFolder>());
+            return std::unique_ptr<IShellFolder, Releaser<IShellFolder>>(pDesktop);
         }();
 
         LPITEMIDLIST pidl = NULL;
@@ -62,7 +62,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
         }
         std::shared_ptr<ITEMIDLIST> pidlSharedPtr(pidl, CoTaskMemFree);
 
-        auto sub = [desktop, pidl]{
+        auto sub = [&]{
             IShellFolder* pSub = NULL;
             const HRESULT hr = desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&pSub);
             if(FAILED(hr))
@@ -70,7 +70,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
                 qDebug() << __FUNCTION__ << __LINE__ << "!!!!!!!!!!!!";
                 throw std::exception();
             }
-            return std::shared_ptr<IShellFolder>(pSub, Releaser<IShellFolder>());
+            return std::unique_ptr<IShellFolder, Releaser<IShellFolder>>(pSub);
         }();
 
         {
@@ -84,7 +84,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
             }
         }
 
-        auto extract = [sub, pidl]{
+        auto extract = [&]{
             IExtractImage* pIExtract = NULL;
             const HRESULT hr = sub ->GetUIObjectOf(NULL, 1, (LPCITEMIDLIST *)&pidl, IID_IExtractImage, NULL, (void**)& pIExtract);
             if(FAILED(hr))
@@ -92,7 +92,7 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
                 qDebug() << __FUNCTION__ << __LINE__ << "!!!!!!!!!!!!";
                 throw std::exception();
             }
-            return std::shared_ptr<IExtractImage>(pIExtract,  Releaser<IExtractImage>());
+            return std::unique_ptr<IExtractImage,  Releaser<IExtractImage>>(pIExtract);
         }();
 
         {// Set up the options for the image
