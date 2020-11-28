@@ -99,18 +99,15 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
             SIZE size{width, heigth};
             DWORD dwFlags = IEIFLAG_ORIGSIZE | IEIFLAG_QUALITY;
             OLECHAR pathBuffer[MAX_PATH];
-            const HRESULT hr = extract->GetLocation(pathBuffer, MAX_PATH, NULL, &size,32, &dwFlags);
-            (void)hr;
+            [[maybe_unused]]const HRESULT hr = extract->GetLocation(pathBuffer, MAX_PATH, NULL, &size,32, &dwFlags);
         }
 
         HBITMAP hThumbnail = NULL;
         {// Get the image
-            const HRESULT hr = extract ->Extract(&hThumbnail);
-            (void)hr;
+            [[maybe_unused]]const HRESULT hr = extract ->Extract(&hThumbnail);
         }
 
-        HbitmapPtr ptr(hThumbnail, DeleteObject);
-        return ptr;
+        return HbitmapPtr(hThumbnail, DeleteObject);
     }catch(...)
     {
         return NULL;
@@ -120,7 +117,6 @@ static HbitmapPtr Thumbnail(const std::wstring &File,
 
 QPixmap ThumbnailProvider::GetThumbnail(const QString &path, const long width, const long heigth)
 {
-    HbitmapPtr hBmp = Thumbnail(QString(path).replace('/', '\\').toStdWString(), width, heigth);
-    QPixmap ret = QtWin::fromHBITMAP(hBmp.get());
-    return ret;
+    auto hBmp = Thumbnail(QString(path).replace('/', '\\').toStdWString(), width, heigth);
+    return QtWin::fromHBITMAP(hBmp.get());
 }
